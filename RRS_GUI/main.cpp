@@ -20,9 +20,16 @@ using namespace std;
 
 
 
-Fl_Window win(800, 600, "Robbie Robot Shop");
+Fl_Window win(800, 600, "Robbie Robot Shop---Login As");
 
 void Button_PM1(Fl_Widget *win, void*);
+void Button_PM(Fl_Widget *win, void*);
+void Button_SA(Fl_Widget *win, void*);
+void Button_BC(Fl_Widget *win, void*);
+void Button_PB(Fl_Widget *win, void*);
+void Button_Order(Fl_Widget *sa_win, void*);
+void Button_Bill(Fl_Window *sa_win, void*);
+void Button_Browse(Fl_Window *bc_win, void*);
 void Button_RPart1(Fl_Widget *pm_win, void*);
 void Button_RPart2(Fl_Widget *pm_win, void*);
 void Button_RPart3(Fl_Widget *pm_win, void*);
@@ -37,12 +44,15 @@ void create_part7CB(Fl_Window *g, void*);
 void create_part0CB(Fl_Window *g, void*);
 void create_part1CB(Fl_Window *g, void*);
 void create_part5CB(Fl_Window *g, void*);
+void order_modelCB(Fl_Widget *w, void*);
 void Button_RModel(Fl_Window *pm_win, void*);
 void create_modelCB(Fl_Widget *w, void*);
 void Button_ex(Fl_Widget *pm_win, void*);
 Fl_Window *dialog;
 Fl_Window *rm_dialog;
 Fl_Window *rp_dialog;
+Fl_Window *order_dialog;
+Fl_Window *brow;
 
 Fl_Window *dialog1;
 Fl_Box *box1;
@@ -71,6 +81,22 @@ Fl_Input *rm_part3;
 Fl_Input *rm_part4;
 Fl_Input *rm_part5;
 Fl_Input *rm_part6;
+
+
+void Button_PM(Fl_Widget *win, void*)
+{
+	Fl_Window *pm_win = new Fl_Window(250, 250, "RRS --- Product Manager:");
+	
+	Fl_Button *rp = new Fl_Button(50,90,150,40,"Create Robot Part");
+	Fl_Button *rm = new Fl_Button(50,150,150,40,"Create Robot Model");
+	
+	pm_win->end();
+
+	rp->callback((Fl_Callback*) Button_PM1);
+	rm->callback((Fl_Callback*) Button_RModel);
+	pm_win->show();
+
+};
 
 void Button_PM1(Fl_Widget *win, void*)
 {
@@ -393,7 +419,7 @@ void create_part0CB(Fl_Window *g, void*)
 		file << rp_name->value() << " " << rp_number->value() << " " << rp_type->value() << " " << rp_weight->value() << " " << rp_cost->value() << " " << rp_pow->value() << " " << rp_desc->value() << "\n";
 	}
 	file.close();
-	file.close();
+	//file.close();
 	string result;
 	result.append("Name:         ");
 	result.append(rp_name->value());
@@ -580,10 +606,187 @@ void create_part7CB(Fl_Window *g, void*)
 
 
 
+void Button_SA(Fl_Widget *win, void*)
+{
+	Fl_Window *sa_win = new Fl_Window(250, 250, "RRS --- Sales Associate:");
+	
+	Fl_Button *odr = new Fl_Button(50,90,150,40,"Order Robot Model");
+	Fl_Button *bill = new Fl_Button(50,150,150,40,"Bill of Sale");
+	
+	
+	sa_win->end();
+
+	odr->callback((Fl_Callback*) Button_Order);
+	bill->callback((Fl_Callback*) Button_Bill);
+	sa_win->show();
+
+};
 
 
+void Button_Order(Fl_Widget *sa_win, void*)
+{
+		order_dialog = new Fl_Window(500,300,"Create Robot Model");
+	
+		rm_name = new Fl_Input(150, 10, 210, 25, "Order Number: ");
+		rm_name->align(FL_ALIGN_LEFT);
+		rm_number = new Fl_Input(150, 40, 210, 25, "Model Name: ");
+		rm_number->align(FL_ALIGN_LEFT);
+		rm_part1 = new Fl_Input(150, 70, 210, 25, "Model Number: ");
+		rm_part1->align(FL_ALIGN_LEFT);
+		rm_part2 = new Fl_Input(150, 100, 210, 25, "Customer Name: ");
+		rm_part2->align(FL_ALIGN_LEFT);
+		rm_part3 = new Fl_Input(150, 130, 210, 25, "Date (MMDDYY): ");
+		rm_part3->align(FL_ALIGN_LEFT);				
+		Fl_Button *order_create = new Fl_Button(245, 230, 120, 25, "Order!");
+		order_create->callback((Fl_Callback*) order_modelCB,0);
+		
+		order_dialog->end();
+		order_dialog->show();
+
+};
+
+void order_modelCB(Fl_Widget *w, void*)
+{
+	fstream file4("order.csv", ios::in | ios::out | ios::app);
+	
+	if(file4.is_open())
+	{
+		file4 << rm_name->value() << " " << rm_number->value() << " " << rm_part1->value() << " " << rm_part2->value() << " " << rm_part3->value() << "\n";
+	}
+	file4.close();
+	string result9;
+	result9.append("Order Number:  ");
+	result9.append(rm_name->value());
+	result9.append("\n");
+	result9.append("Model Name:    ");
+	result9.append(rm_number->value());
+	result9.append("\n");
+	result9.append("Model Number:   ");
+	result9.append(rm_part1->value());
+	result9.append("\n");
+	result9.append("Customer Name:  ");
+	result9.append(rm_part2->value());
+	result9.append("\n");
+	result9.append("Date(MM/DD/YY): ");
+	result9.append(rm_part3->value());
+	result9.append("\n");	
+	fl_message(result9.c_str());
+
+	order_dialog->hide();
+	
+}
+
+void Button_Bill(Fl_Window *sa_win, void*)
+{
+	fstream file("models.csv", ios::in | ios::out | ios::app);
+	fstream file2("order.csv", ios::in | ios:: out | ios::app);
+	
+	Fl_Window *bill = new Fl_Window(800,600, "Bill Of Sale");
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20,20,760,560, "Bill of Sale");
+	disp->buffer(buff);	
+	bill->resizable(*disp);
+	bill->show();	
+
+	string model_name, name, number, onumber, cost, cname, date, mnum;
+	string part1, part2, part3, part4, part5, part6, streeng;
+	double tot_sale=0.0;
+	
+	streeng = "OrderNumber ModelName Price Customer Date\n";
+
+	while(file2 >> onumber >> model_name >> mnum >> cname >> date)
+	{
+		while(file >> name >> number >> cost >> part1 >> part2 >> part3 >> part4 >> part5 >> part6 )
+		{		
+			if(name == model_name)
+			{			
+			int money = (int) atoi(cost.c_str());
+			tot_sale += money;
+			streeng = streeng + onumber+ "\t\t" + model_name+ "\t" + cost+ "\t" + cname+ "\t" + date + "\n";
+			const char *c = streeng.c_str();
+			buff->text(c);
+			}
+		}
+	}
+	file.close();
+	file2.close();
+};
+
+void Button_BC(Fl_Widget *win, void*)
+{	
+	Fl_Window *bc_win = new Fl_Window(400, 500, "RRS - Logged in As Beloved Customer:");
+	
+	Fl_Button *browse = new Fl_Button(100,30,200,100,"Browse Robot Catalog");
+	Fl_Button *vodr = new Fl_Button(100,180,200,100,"View my Order");
+	Fl_Button *cbill = new Fl_Button(100,330,200,100,"View my Bill");
+	
+	bc_win->end();
+
+	browse->callback((Fl_Callback*) Button_Browse);
+	//vodr->callback((Fl_Callback*) Button_View_Order);
+	//cbill->callback((Fl_Callback*) Button_Bill);
+	bc_win->show();
+
+};
 
 
+void Button_Browse(Fl_Window *bc_win, void*)
+{         
+        brow = new Fl_Window(800,600,"Browse Catalog");
+	fl_register_images();
+
+        Fl_JPEG_Image *robot1 = new Fl_JPEG_Image("robot1.jpg");	
+        box1 = new Fl_Box(150,30,100,100);
+        box1->image(robot1);
+        
+        Fl_JPEG_Image *robot2 = new Fl_JPEG_Image("robot2.jpg");	
+        box2 = new Fl_Box(150,180,100,100);
+        box2->image(robot2);
+
+        Fl_JPEG_Image *robot3 = new Fl_JPEG_Image("robot3.jpg");	
+        box3 = new Fl_Box(150,330,100,100);
+        box3->image(robot3);
+
+        Fl_JPEG_Image *robot4 = new Fl_JPEG_Image("robot4.jpg");	
+        box4 = new Fl_Box(150,480,100,100);
+        box4->image(robot4);
+        
+        Fl_JPEG_Image *robot5 = new Fl_JPEG_Image("robot5.jpg");	
+        box5 = new Fl_Box(500,30,100,100);
+        box5->image(robot5);
+        
+        Fl_JPEG_Image *robot6 = new Fl_JPEG_Image("robot6.jpg");	
+        box6 = new Fl_Box(500,180,100,100);
+        box6->image(robot6);
+
+        Fl_JPEG_Image *robot7 = new Fl_JPEG_Image("robot7.jpg");	
+        box7 = new Fl_Box(500,330,100,100);
+        box7->image(robot7);
+
+        Fl_JPEG_Image *robot8 = new Fl_JPEG_Image("robot8.jpg");	
+        box8 = new Fl_Box(500,480,100,100);
+        box8->image(robot8);
+        
+brow->end();
+brow->show();
+
+	
+	
+};
+
+void Button_PB(Fl_Widget *win, void*)
+{
+	Fl_Window *boss_win = new Fl_Window(400, 400, "RRS - Logged in As BossMan");
+	
+	Fl_Button *order = new Fl_Button(100,30,200,100,"View Orders");
+	Fl_Button *sales = new Fl_Button(100,180,200,100,"Sales Report");
+	
+	boss_win->end();
+
+	//order->callback((Fl_Callback*) Button_View_Order);
+	//sales->callback((Fl_Callback*) Button_Bill);
+	boss_win->show();
+};
 
 
 //MAIN FUNCTION
@@ -594,16 +797,20 @@ int main()
 	Fl_Box box(15,15,800,600);	
 	Fl_JPEG_Image jpg("Backgraound.jpg");
 	box.image(jpg);
-	Fl_Button *cp = new Fl_Button(150,350,200,30,"Create Robot Parts");
-	Fl_Button *cm = new Fl_Button(150,390,200,30,"Create Robot Models");
-	Fl_Button *xx = new Fl_Button(150,430,200,30,"Exit");
+	Fl_Button *pm = new Fl_Button(150,350,200,30,"Product Manager");
+	Fl_Button *sa = new Fl_Button(150,390,200,30,"Sales Associate");
+	Fl_Button *bc = new Fl_Button(150,430,200,30,"Customer");
+	Fl_Button *pb = new Fl_Button(150,470,200,30,"Boss");
+	Fl_Button *xx = new Fl_Button(150,510,200,30,"Exit");
 
 	win.end();
 
 
 
-	cp->callback((Fl_Callback*) Button_PM1);
-	cm->callback((Fl_Callback*) Button_RModel);
+	pm->callback((Fl_Callback*) Button_PM);
+	sa->callback((Fl_Callback*) Button_SA);
+	bc->callback((Fl_Callback*) Button_BC);
+	pb->callback((Fl_Callback*) Button_PB);
 	xx->callback((Fl_Callback*) Button_RPart2);
 
 	win.show();
