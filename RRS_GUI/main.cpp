@@ -29,6 +29,7 @@ void Button_BC(Fl_Widget *win, void*);
 void Button_PB(Fl_Widget *win, void*);
 void Button_Order(Fl_Widget *sa_win, void*);
 void Button_Bill(Fl_Window *sa_win, void*);
+void Button_View_Order(Fl_Widget *bc_win, void*);
 void Button_Browse(Fl_Window *bc_win, void*);
 void Button_RPart1(Fl_Widget *pm_win, void*);
 void Button_RPart2(Fl_Widget *pm_win, void*);
@@ -692,7 +693,7 @@ void Button_Bill(Fl_Window *sa_win, void*)
 	string part1, part2, part3, part4, part5, part6, streeng;
 	double tot_sale=0.0;
 	
-	streeng = "OrderNumber ModelName Price Customer Date\n";
+	streeng = "OrderNumber\tModelName\tPrice\tCustomer\tDate\n";
 
 	while(file2 >> onumber >> model_name >> mnum >> cname >> date)
 	{
@@ -702,7 +703,7 @@ void Button_Bill(Fl_Window *sa_win, void*)
 			{			
 			int money = (int) atoi(cost.c_str());
 			tot_sale += money;
-			streeng = streeng + onumber+ "\t\t" + model_name+ "\t" + cost+ "\t" + cname+ "\t" + date + "\n";
+			streeng = streeng+ onumber+ "\t\t" + model_name+ "\t\t" + cost+ "\t" + cname+ "\t\t" + date + "\n";
 			const char *c = streeng.c_str();
 			buff->text(c);
 			}
@@ -714,20 +715,19 @@ void Button_Bill(Fl_Window *sa_win, void*)
 
 void Button_BC(Fl_Widget *win, void*)
 {	
-	Fl_Window *bc_win = new Fl_Window(400, 500, "RRS - Logged in As Beloved Customer:");
+	Fl_Window *bc_win = new Fl_Window(300, 300, "RRS --- Beloved Customer:");
 	
-	Fl_Button *browse = new Fl_Button(100,30,200,100,"Browse Robot Catalog");
-	Fl_Button *vodr = new Fl_Button(100,180,200,100,"View my Order");
-	Fl_Button *cbill = new Fl_Button(100,330,200,100,"View my Bill");
+	Fl_Button *browse = new Fl_Button(60,70,180,50,"Browse Robot Catalog");
+	Fl_Button *cbill = new Fl_Button(60,140,180,50,"View my Bill");
 	
 	bc_win->end();
 
 	browse->callback((Fl_Callback*) Button_Browse);
-	//vodr->callback((Fl_Callback*) Button_View_Order);
-	//cbill->callback((Fl_Callback*) Button_Bill);
+	cbill->callback((Fl_Callback*) Button_Bill);
 	bc_win->show();
 
 };
+
 
 
 void Button_Browse(Fl_Window *bc_win, void*)
@@ -735,11 +735,11 @@ void Button_Browse(Fl_Window *bc_win, void*)
         brow = new Fl_Window(800,600,"Browse Catalog");
 	fl_register_images();
 
-        Fl_JPEG_Image *robot1 = new Fl_JPEG_Image("robot1.jpg");	
+        Fl_JPEG_Image *robot1 = new Fl_JPEG_Image("robot5.jpg");	
         box1 = new Fl_Box(150,30,100,100);
         box1->image(robot1);
         
-        Fl_JPEG_Image *robot2 = new Fl_JPEG_Image("robot2.jpg");	
+        Fl_JPEG_Image *robot2 = new Fl_JPEG_Image("robot4.jpg");	
         box2 = new Fl_Box(150,180,100,100);
         box2->image(robot2);
 
@@ -747,19 +747,19 @@ void Button_Browse(Fl_Window *bc_win, void*)
         box3 = new Fl_Box(150,330,100,100);
         box3->image(robot3);
 
-        Fl_JPEG_Image *robot4 = new Fl_JPEG_Image("robot4.jpg");	
+        Fl_JPEG_Image *robot4 = new Fl_JPEG_Image("robot2.jpg");	
         box4 = new Fl_Box(150,480,100,100);
         box4->image(robot4);
         
-        Fl_JPEG_Image *robot5 = new Fl_JPEG_Image("robot5.jpg");	
+        Fl_JPEG_Image *robot5 = new Fl_JPEG_Image("robot7.jpg");	
         box5 = new Fl_Box(500,30,100,100);
         box5->image(robot5);
         
-        Fl_JPEG_Image *robot6 = new Fl_JPEG_Image("robot6.jpg");	
+        Fl_JPEG_Image *robot6 = new Fl_JPEG_Image("robot1.jpg");	
         box6 = new Fl_Box(500,180,100,100);
         box6->image(robot6);
 
-        Fl_JPEG_Image *robot7 = new Fl_JPEG_Image("robot7.jpg");	
+        Fl_JPEG_Image *robot7 = new Fl_JPEG_Image("robot6.jpg");	
         box7 = new Fl_Box(500,330,100,100);
         box7->image(robot7);
 
@@ -776,15 +776,13 @@ brow->show();
 
 void Button_PB(Fl_Widget *win, void*)
 {
-	Fl_Window *boss_win = new Fl_Window(400, 400, "RRS - Logged in As BossMan");
+	Fl_Window *boss_win = new Fl_Window(300, 300, "RRS --- Boss");
 	
-	Fl_Button *order = new Fl_Button(100,30,200,100,"View Orders");
-	Fl_Button *sales = new Fl_Button(100,180,200,100,"Sales Report");
+	Fl_Button *sales = new Fl_Button(60,150,180,50,"Sales Report");
 	
 	boss_win->end();
 
-	//order->callback((Fl_Callback*) Button_View_Order);
-	//sales->callback((Fl_Callback*) Button_Bill);
+	sales->callback((Fl_Callback*) Button_Bill);
 	boss_win->show();
 };
 
